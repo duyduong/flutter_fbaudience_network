@@ -2,6 +2,14 @@
 
 A plugin for retrieving FB Audience Network
 
+Supporting ads:
+- Native Banner Ad
+- Native Ad (Working)
+
+Supporting platform:
+- Android
+- iOS (waiting for Flutter team to update iOS platform view)
+
 ## Getting Started
 
 For help getting started with Flutter, view our online
