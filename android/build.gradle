@@ -41,6 +41,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:recyclerview-v7:27.1.1' // Required Dependency by Audience Network SDK
-    implementation 'com.facebook.android:audience-network-sdk:5.+'
+    api 'com.android.support:recyclerview-v7:27.1.1' // Required Dependency by Audience Network SDK
+    api 'com.facebook.android:audience-network-sdk:5.+'
 }
