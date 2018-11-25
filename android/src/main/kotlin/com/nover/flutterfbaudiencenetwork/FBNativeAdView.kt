@@ -34,10 +34,6 @@ class FBNativeAdView(
     init {
         val map = params as HashMap<*, *>
         val placementID = map["placementID"] as String
-        val testing = map["testing"] as Boolean
-
-        println("nativeBannerAd placementID $placementID")
-        println("nativeBannerAd testing $testing")
 
         nativeBannerAd = NativeBannerAd(context, placementID)
         nativeBannerAd.setAdListener(this)

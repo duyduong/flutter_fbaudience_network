@@ -5,15 +5,14 @@ import 'package:flutter/services.dart';
 class FBNativeBannerAd extends StatefulWidget {
 
   final String placementID;
-  final bool testing;
   final Function onCreate;
 
   FBNativeBannerAd({
     Key key,
     @required this.placementID,
-    this.testing = false,
     this.onCreate
-  }) : super(key: key);
+  }) : assert(placementID.isNotEmpty, "Placement ID should not be empty"),
+    super(key: key);
 
   @override
   _FBNativeBannerAdState createState() => _FBNativeBannerAdState();
@@ -30,12 +29,11 @@ class _FBNativeBannerAdState extends State<FBNativeBannerAd> {
         creationParamsCodec: StandardMessageCodec(),
         creationParams: {
           "placementID": widget.placementID,
-          "testing": widget.testing,
         },
       );
     }
 
-    return Text('$defaultTargetPlatform is not yet supported by the text_view plugin');
+    return Text('$defaultTargetPlatform is not supported PlatformView yet.');
   }
 
   _onPlatformViewCreated(int id) {

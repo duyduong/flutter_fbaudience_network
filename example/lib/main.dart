@@ -11,7 +11,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  static const placementID = "901187426651461_1476779722425559";
+  static const placementID = "YOUR_PLACEMENT_ID";
 
   @override
   void initState() {
@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
         body: Container(
           height: 100.0,
           child: FBNativeBannerAd(
-            placementID: "YOUR_PLACEMENT_ID",
+            placementID: placementID,
             onCreate: (NativeAdController controller) {
               controller.setTitleColor("#ffffff");
               controller.setSocialTextColor("#ffffff");
