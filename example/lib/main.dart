@@ -25,17 +25,56 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Container(
-          height: 100.0,
-          child: FBNativeBannerAd(
-            placementID: placementID,
-            onCreate: (NativeAdController controller) {
-              controller.setTitleColor("#ffffff");
-              controller.setSocialTextColor("#ffffff");
-              controller.setBackgroundColor("#232325");
-              controller.setContentPadding(top: 10, left: 10, right: 10);
-            },
-          ),
+        body: ListView(
+          children: <Widget>[
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 100.0,
+              child: FBNativeBannerAd(
+                placementID: placementID,
+                onCreate: (NativeAdController controller) {
+                  controller.setTitleColor("#ffffff");
+                  controller.setSocialTextColor("#ffffff");
+                  controller.setBackgroundColor("#232325");
+                  controller.setContentPadding(top: 10, left: 10, right: 10);
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

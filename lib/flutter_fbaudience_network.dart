@@ -2,10 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+typedef FBNativeBannerAdCreatedCallback = void Function(NativeAdController controller);
+
 class FBNativeBannerAd extends StatefulWidget {
 
   final String placementID;
-  final Function onCreate;
+  final FBNativeBannerAdCreatedCallback onCreate;
 
   FBNativeBannerAd({
     Key key,

@@ -1,6 +1,6 @@
 name: flutter_fbaudience_network
 description: A plugin for retrieving FB Audience Network
-version: 0.0.1+3
+version: 0.1.1
 author: Dao Duy Duong <dduy.duong@gmail.com>
 homepage: https://github.com/duyduong/flutter_fbaudience_network
 
