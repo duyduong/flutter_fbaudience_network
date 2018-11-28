@@ -42,37 +42,38 @@ class _MyAppState extends State<MyApp> {
               color: Colors.green,
               margin: EdgeInsets.only(bottom: 20.0),
             ),
-            Container(
-              height: 150.0,
-              color: Colors.green,
+            FBNativeBannerAd(
+              placementID: placementID,
+              padding: EdgeInsets.all(8.0),
               margin: EdgeInsets.only(bottom: 20.0),
-            ),
-            Container(
-              height: 150.0,
-              color: Colors.green,
-              margin: EdgeInsets.only(bottom: 20.0),
-            ),
-            Container(
-              height: 150.0,
-              color: Colors.green,
-              margin: EdgeInsets.only(bottom: 20.0),
-            ),
-            Container(
-              height: 150.0,
-              color: Colors.green,
-              margin: EdgeInsets.only(bottom: 20.0),
-            ),
-            Container(
-              height: 100.0,
-              child: FBNativeBannerAd(
-                placementID: placementID,
-                onCreate: (NativeAdController controller) {
-                  controller.setTitleColor("#ffffff");
-                  controller.setSocialTextColor("#ffffff");
-                  controller.setBackgroundColor("#232325");
-                  controller.setContentPadding(top: 10, left: 10, right: 10);
-                },
+              style: AdStyle(
+                titleColor: Colors.white,
+                socialTextColor: Colors.blueGrey,
+                backgroundColor: Colors.black,
               ),
+              onCreate: (NativeAdController controller) {
+                // controller.loadAd();
+              },
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
+            ),
+            Container(
+              height: 150.0,
+              color: Colors.green,
+              margin: EdgeInsets.only(bottom: 20.0),
             ),
           ],
         ),

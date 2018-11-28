@@ -9,16 +9,21 @@ class FlutterFBAudienceNetworkPlugin {
 
   companion object {
 
-    const val viewType = "fb_native_ad_view"
+    const val bannerViewType = "fb_native_banner_ad_view"
 
     @JvmStatic
     fun registerWith(registrar: Registrar) {
-      val loader = AdLoader(registrar.context())
       AudienceNetworkAds.initialize(registrar.context())
 
       registrar
           .platformViewRegistry()
-          .registerViewFactory(viewType, FBNativeBannerAdViewFactory(registrar.messenger(), loader))
+          .registerViewFactory(
+              bannerViewType,
+              FBNativeBannerAdViewFactory(
+                  registrar.messenger(),
+                  AdLoader(registrar.context())
+              )
+          )
     }
   }
 }
@@ -52,11 +57,11 @@ class AdLoader(
   fun loadAd(placementID: String) {
     if (isLoading) return
 
+    isLoading = true
+
     if (nativeBannerAd != null && nativeBannerAd!!.isAdLoaded && !nativeBannerAd!!.isAdInvalidated) {
       onAdLoaded(nativeBannerAd!!)
     } else {
-      isLoading = true
-
       nativeBannerAd = NativeBannerAd(context, placementID)
       nativeBannerAd!!.setAdListener(this)
       nativeBannerAd!!.loadAd()

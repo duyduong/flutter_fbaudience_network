@@ -18,32 +18,27 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
 
-            <RelativeLayout
-                android:id="@+id/ad_label_view"
+            <TextView
+                android:id="@+id/ad_attribution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:text="Ad"
                 android:paddingTop="1dp"
                 android:paddingBottom="1dp"
                 android:paddingStart="3dp"
-                android:paddingEnd="3dp"
-                android:layout_alignParentStart="true">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:text="Ad"/>
-            </RelativeLayout>
+                android:paddingEnd="3dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_alignParentEnd="true">
+                android:layout_alignParentRight="true">
 
                 <RelativeLayout
                     android:id="@+id/ad_choices_container"
@@ -67,8 +62,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
@@ -106,11 +100,10 @@
 
             <Button
                 android:id="@+id/native_ad_call_to_action"
-                android:layout_width="80dp"
+                android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:background="#4286F4"
                 android:gravity="center"
-                android:padding="3dp"
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 android:visibility="gone" />

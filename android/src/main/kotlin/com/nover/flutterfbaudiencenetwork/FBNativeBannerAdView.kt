@@ -17,9 +17,11 @@ import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.platform.PlatformView
+import kotlin.math.roundToInt
 
 enum class CalMethod {
-  setTitleColor, setSocialTextColor, setBackgroundColor, setContentPadding
+  /// allow controller to reload the ad
+  loadAd
 }
 
 class FBNativeBannerAdView(
@@ -31,14 +33,24 @@ class FBNativeBannerAdView(
 ) : PlatformView, MethodChannel.MethodCallHandler, AdLoaderListener {
 
   private val view: FBNativeBannerAd = FBNativeBannerAd(context)
-  private val methodChannel: MethodChannel = MethodChannel(messenger, "${FlutterFBAudienceNetworkPlugin.viewType}_$id")
+  private val methodChannel: MethodChannel = MethodChannel(messenger, "${FlutterFBAudienceNetworkPlugin.bannerViewType}_$id")
+  private val placementID: String
 
   init {
     methodChannel.setMethodCallHandler(this)
 
     val map = params as HashMap<*, *>
-    val placementID = map["placementID"] as String
 
+    val contentPadding = Padding.parse(map["contentPadding"] as String)
+    view.contentPadding = contentPadding
+
+    val style = map["style"] as HashMap<*, *>
+    println("============= style $style")
+    view.titleColor = Color.parseColor(style["titleColor"] as String)
+    view.socialTextColor = Color.parseColor(style["socialTextColor"] as String)
+    view.bgColor = Color.parseColor(style["backgroundColor"] as String)
+
+    placementID = map["placementID"] as String
     adLoader.addListener(this)
     adLoader.loadAd(placementID)
   }
@@ -52,20 +64,8 @@ class FBNativeBannerAdView(
   override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
     val method = CalMethod.valueOf(call.method)
     when (method) {
-      CalMethod.setTitleColor -> {
-        view.setTitleColor(call)
-        result.success(null)
-      }
-      CalMethod.setSocialTextColor -> {
-        view.setSocialTextColor(call)
-        result.success(null)
-      }
-      CalMethod.setBackgroundColor -> {
-        view.setBackgroundColor(call)
-        result.success(null)
-      }
-      CalMethod.setContentPadding -> {
-        view.setContentPadding(call)
+      CalMethod.loadAd -> {
+        adLoader.loadAd(placementID)
         result.success(null)
       }
     }
@@ -82,52 +82,45 @@ class FBNativeBannerAd @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : RelativeLayout(context, attrs, defStyleAttr) {
 
-  private var titleColor: Int = Color.parseColor("#000000")
-  private var socialTextColor: Int = Color.parseColor("#000000")
-  private var bgColor: Int = Color.parseColor("#ffffff")
-
-  private var contentPadding: Padding = Padding(0, 0, 0, 0)
+  var titleColor: Int = Color.WHITE
+  var socialTextColor: Int = Color.WHITE
+  var bgColor: Int = Color.BLACK
+  var contentPadding: Padding = Padding.zero
 
   private val loadingIndicator: ProgressBar
-    get() = findViewById(R.id.loading_indicator)
-
   private val containerView: LinearLayout
-    get() = findViewById(R.id.native_ad_container)
-
   private val adChoicesContainer: RelativeLayout
-    get() = findViewById(R.id.ad_choices_container)
-
   private val adTitle: TextView
-    get() = findViewById(R.id.native_ad_title)
-
   private val adSocialContext: TextView
-    get() = findViewById(R.id.native_ad_social_context)
-
   private val sponsoredLabel: TextView
-    get() = findViewById(R.id.native_ad_sponsored_label)
-
   private val adCallToAction: Button
-    get() = findViewById(R.id.native_ad_call_to_action)
-
   private val adIconView: AdIconView
-    get() = findViewById(R.id.native_icon_view)
-
-  private val adLabelView: RelativeLayout
-    get() = findViewById(R.id.ad_label_view)
+  private val adLabelView: TextView
 
   init {
     val inflater = LayoutInflater.from(context)
     inflater.inflate(R.layout.fb_native_banner_ad, this, true)
 
+    loadingIndicator = findViewById(R.id.loading_indicator)
+    containerView = findViewById(R.id.native_ad_container)
+    adChoicesContainer = findViewById(R.id.ad_choices_container)
+    adTitle = findViewById(R.id.native_ad_title)
+    adSocialContext = findViewById(R.id.native_ad_social_context)
+    sponsoredLabel = findViewById(R.id.native_ad_sponsored_label)
+    adCallToAction = findViewById(R.id.native_ad_call_to_action)
+    adIconView = findViewById(R.id.native_icon_view)
+    adLabelView = findViewById(R.id.ad_attribution)
+
+    adTitle.setTextColor(titleColor)
+    adSocialContext.setTextColor(socialTextColor)
     setBackgroundColor(bgColor)
+    containerView.setPadding(contentPadding.left.dp(), contentPadding.top.dp(), contentPadding.right.dp(), contentPadding.bottom.dp())
 
     val color = Color.parseColor("#fbb320")
     adLabelView.background = color.toRoundedColor(3f)
   }
 
   fun inflateAd(nativeBannerAd: NativeBannerAd) {
-    setBackgroundColor(bgColor)
-
     loadingIndicator.visibility = View.GONE
 
     containerView.visibility = View.VISIBLE
@@ -137,10 +130,8 @@ class FBNativeBannerAd @JvmOverloads constructor(
     adChoicesContainer.addView(adChoicesView)
 
     adTitle.text = nativeBannerAd.advertiserName
-    adTitle.setTextColor(titleColor)
 
     adSocialContext.text = nativeBannerAd.adSocialContext
-    adSocialContext.setTextColor(socialTextColor)
 
     sponsoredLabel.text = nativeBannerAd.sponsoredTranslation
 
@@ -152,44 +143,6 @@ class FBNativeBannerAd @JvmOverloads constructor(
     clickableViews.add(adCallToAction)
     nativeBannerAd.registerViewForInteraction(this, adIconView, clickableViews)
   }
-
-  fun setTitleColor(call: MethodCall) {
-    var colorString = call.argument<String>("color")
-    if (colorString.isNullOrEmpty()) colorString = "#000000"
-
-    titleColor = Color.parseColor(colorString)
-
-    adTitle.setTextColor(titleColor)
-  }
-
-  fun setSocialTextColor(call: MethodCall) {
-    var colorString = call.argument<String>("color")
-    if (colorString.isNullOrEmpty()) colorString = "#000000"
-
-    socialTextColor = Color.parseColor(colorString)
-
-    adSocialContext.setTextColor(socialTextColor)
-  }
-
-  fun setBackgroundColor(call: MethodCall) {
-    var colorString = call.argument<String>("color")
-    if (colorString.isNullOrEmpty()) colorString = "#ffffff"
-
-    bgColor = Color.parseColor(colorString)
-    setBackgroundColor(bgColor)
-  }
-
-  fun setContentPadding(call: MethodCall) {
-    val density = Resources.getSystem().displayMetrics.density
-    val top = (call.argument<Int>("top")!! * density).toInt()
-    val left = (call.argument<Int>("left")!! * density).toInt()
-    val bottom = (call.argument<Int>("bottom")!! * density).toInt()
-    val right = (call.argument<Int>("right")!! * density).toInt()
-
-    contentPadding = Padding(left, top, right, bottom)
-
-    containerView.setPadding(left, top, right, bottom)
-  }
 }
 
 data class Padding(
@@ -197,7 +150,53 @@ data class Padding(
     val top: Int,
     val right: Int,
     val bottom: Int
-)
+) {
+
+  companion object {
+
+    val zero get() = Padding(0,0,0,0)
+
+    fun parse(paddingString: String): Padding {
+      val parts = paddingString.split(",")
+          .map { it.trim().toFloat().roundToInt() }
+
+      val len = parts.count()
+
+      val left: Int
+      val top: Int
+      val right: Int
+      val bottom: Int
+
+      if (len == 1) {
+        val p = parts.first()
+        left = p
+        top = p
+        right = p
+        bottom = p
+      } else if (len == 2) {
+        val hp = parts.first()
+        left = hp
+        right = hp
+
+        val vp = parts.last()
+        top = vp
+        bottom = vp
+      } else if (len == 3) {
+        left = parts[0]
+        top = parts[1]
+        right = parts[2]
+        bottom = 0
+      } else {
+        left = parts[0]
+        top = parts[1]
+        right = parts[2]
+        bottom = parts[3]
+      }
+
+      return Padding(left.dp(), top.dp(), right.dp(), bottom.dp())
+    }
+  }
+}
 
 fun Int.toRoundedColor(radius: Float): Drawable {
   val drawable = GradientDrawable()
@@ -205,6 +204,11 @@ fun Int.toRoundedColor(radius: Float): Drawable {
   drawable.cornerRadius = radius * Resources.getSystem().displayMetrics.density
   drawable.setColor(this)
   return drawable
+}
+
+fun Int.dp(): Int {
+  val density = Resources.getSystem().displayMetrics.density
+  return (this * density).toInt()
 }
 
 
